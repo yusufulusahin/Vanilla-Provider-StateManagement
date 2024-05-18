@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:statemanagment_learn/future/onboard/OnBoardCard.dart';
 import 'package:statemanagment_learn/future/onboard/onBoard_Tabindicator.dart';
 import 'package:statemanagment_learn/future/onboard/onboard_model_view.dart';
+import 'package:statemanagment_learn/future/onboard/startFabButton.dart';
 
 class OnBoardView extends StatefulWidget {
   const OnBoardView({super.key});
@@ -16,10 +17,7 @@ class _OnBoardViewState extends State<OnBoardView> {
   bool get _isLastPage =>
       OnBoardModels.onBoardItems.length - 1 == _selectedindex;
   bool get _isFirsPage => _selectedindex == 0;
-
   int _selectedindex = 0;
-  final String _start = 'Start';
-  final String _next = 'Next';
 
   @override
   void initState() {
@@ -59,7 +57,7 @@ class _OnBoardViewState extends State<OnBoardView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TabSelectIndicator(selectedIndex: _selectedindex),
-                    _floatingActionButton()
+                    StartFaButton(isLastPage: _isLastPage)
                   ],
                 ),
               )
@@ -97,15 +95,6 @@ class _OnBoardViewState extends State<OnBoardView> {
       itemCount: OnBoardModels.onBoardItems.length,
       itemBuilder: (context, index) {
         return OnBoardCard(model: OnBoardModels.onBoardItems[index]);
-      },
-    );
-  }
-
-  FloatingActionButton _floatingActionButton() {
-    return FloatingActionButton(
-      child: Text(_isLastPage ? _start : _next),
-      onPressed: () {
-        _incrementAndChange();
       },
     );
   }
