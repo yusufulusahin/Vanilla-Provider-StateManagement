@@ -18,24 +18,40 @@ class _OnBoardViewState extends State<OnBoardView> {
       OnBoardModels.onBoardItems.length - 1 == _selectedindex;
   bool get _isFirsPage => _selectedindex == 0;
   int _selectedindex = 0;
+  ValueNotifier<bool> isBackEnable = ValueNotifier(false);
 
   @override
   void initState() {
     super.initState();
   }
 
-  void _incrementindex([int? value]) {
+  void incrementindex([int? value]) {
     print(value);
     setState(() {
-      _selectedindex = value ?? _selectedindex++;
+      if (value != null) {
+        _selectedindex = value;
+      } else {
+        _selectedindex++;
+      }
     });
   }
 
-  void _incrementAndChange([int? value]) {
-    if (_isLastPage && value == null) {
+  void changeBackEnable(bool value) {
+    if (value == isBackEnable.value) {
       return;
     }
-    _incrementindex(value);
+
+    isBackEnable.value = !value;
+  }
+
+  void incrementAndChange([int? value]) {
+    if (_isLastPage && value == null) {
+      changeBackEnable(true);
+      return;
+    }
+
+    changeBackEnable(false);
+    incrementindex(value);
   }
 
   @override
@@ -57,7 +73,13 @@ class _OnBoardViewState extends State<OnBoardView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TabSelectIndicator(selectedIndex: _selectedindex),
-                    StartFaButton(isLastPage: _isLastPage)
+                    StartFaButton(
+                      isLastPage: _isLastPage,
+                      onpressed: () {
+                        incrementAndChange();
+                        print('object');
+                      },
+                    )
                   ],
                 ),
               )
@@ -77,7 +99,14 @@ class _OnBoardViewState extends State<OnBoardView> {
             ? null
             : IconButton(
                 onPressed: () {}, icon: const Icon(Icons.chevron_left)),
-        actions: [TextButton(onPressed: () {}, child: Text(_skipTitle))]);
+        actions: [
+          ValueListenableBuilder(
+            valueListenable: isBackEnable,
+            builder: (context, value, child) {
+              return TextButton(onPressed: () {}, child: Text(_skipTitle));
+            },
+          )
+        ]);
   }
 
   BoxDecoration _backdecoration() {
@@ -90,7 +119,7 @@ class _OnBoardViewState extends State<OnBoardView> {
   PageView _pageViewBuilder() {
     return PageView.builder(
       onPageChanged: (value) {
-        _incrementAndChange(value);
+        incrementAndChange(value);
       },
       itemCount: OnBoardModels.onBoardItems.length,
       itemBuilder: (context, index) {

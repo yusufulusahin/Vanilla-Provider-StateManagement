@@ -17,7 +17,5 @@ class StartFaButton extends StatelessWidget {
         onpressed;
       },
     );
-
-    ;
   }
 }
